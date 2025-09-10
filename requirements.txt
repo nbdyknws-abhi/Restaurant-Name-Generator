@@ -1,0 +1,7 @@
+
+langchain>=0.2.0
+langchain-groq
+groq
+langchain-community
+streamlit
+google-search-results
