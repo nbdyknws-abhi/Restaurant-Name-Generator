@@ -53,7 +53,7 @@ def render_header():
 
     cols = st.columns([0.13, 0.87])
     with cols[0]:
-        st.image('Sanji.png', width=90)
+        st.image('Logo.png', width=90)
     with cols[1]:
         st.markdown("""
             <div class='header-title'>Restaurant Name Generator</div>
