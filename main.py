@@ -20,21 +20,6 @@ def render_header():
             font-size: 1.15rem;
             font-weight: 500;
         }
-        .header-wrap {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 1.5rem 2rem 1.2rem 1.2rem;
-        }
-        .header-logo {
-            border-radius: 50%;
-            box-shadow: 0 2px 16px rgba(250,204,21,0.4);
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-            background: #1A1A1A;
-            border: 2px solid #FACC15;
-        }
         .main-content {
             background: linear-gradient(135deg, #1A1A1A 0%, #232526 100%);
             border-radius: 20px;
@@ -50,16 +35,11 @@ def render_header():
         """,
         unsafe_allow_html=True
     )
-
-    cols = st.columns([0.13, 0.87])
-    with cols[0]:
-        st.image('Logo.png', width=90)
-    with cols[1]:
-        st.markdown("""
-            <div class='header-title'>Restaurant Name Generator</div>
-            <div class='header-sub'>Get a creative restaurant name and menu based on your favorite cuisine!</div>
-        """, unsafe_allow_html=True)
-
+    st.image("Logo.png", width=90)
+    st.markdown("""
+        <div class='header-title'>Restaurant Name Generator</div>
+        <div class='header-sub'>Pick a cuisine, get fancy restaurant names, and see menu items instantly!</div>
+    """, unsafe_allow_html=True)
 
 # --- Component: Cuisine Selector ---
 def cuisine_selector():
@@ -70,16 +50,13 @@ def cuisine_selector():
         key="cuisine_select"
     )
 
-# --- Component: Restaurant Name and Menu ---
-def render_suggestion(response):
+# --- Component: Render Menu Items ---
+def render_menu_items(restaurant_name, menu_items):
     st.markdown(
-        f"<h4 style='color:#FACC15; margin-top:1.5rem; font-weight:800;'>{response['restaurant_name'].strip()}</h4>",
+        f"<h4 style='color:#FACC15; margin-top:1.5rem; font-weight:800;'>{restaurant_name}</h4>",
         unsafe_allow_html=True
     )
-
-    menu_items = [item.strip() for item in response['menu_items'].strip().split(",") if item.strip()]
     st.markdown("<h4 style='margin-top:1rem; color:#38BDF8;'>Menu Items</h4>", unsafe_allow_html=True)
-
     for item in menu_items:
         st.markdown(
             f"""
@@ -103,11 +80,14 @@ def render_suggestion(response):
 # --- Main Layout ---
 render_header()
 
-
 cuisine = cuisine_selector()
 
 if cuisine:
-    response = langchain_helper.generate_restaurant_name_and_items(cuisine)
-    render_suggestion(response)
+    restaurants = langchain_helper.generate_restaurant_name_and_items(cuisine)
 
-st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("### 🍽️ Restaurants & Menus")
+
+    # Accordion style (expander for each restaurant)
+    for restaurant_name, menu_items in restaurants.items():
+        with st.expander(restaurant_name, expanded=False):
+            render_menu_items(restaurant_name, menu_items)
